@@ -1,11 +1,14 @@
+import { Routes, Route } from "react-router-dom";
 import './App.css'
+import AppLayout from './components/layout/AppLayout'
 
 function App() {
 
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+     <Routes>
+      <Route path="/" element={<AppLayout />}>
+      </Route>
+    </Routes>
   )
 }
 
