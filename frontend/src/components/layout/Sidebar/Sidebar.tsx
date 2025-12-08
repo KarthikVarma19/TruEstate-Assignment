@@ -1,14 +1,11 @@
 import React from 'react'
 import SidebarHeader from './SidebarHeader'
 import SidebarNavSection from './SidebarNavSection'
-import { SlPeople } from 'react-icons/sl';
-import { FiBookOpen, FiPlayCircle } from 'react-icons/fi';
-import { BsJournalBookmark } from 'react-icons/bs';
-import { RxCrossCircled } from 'react-icons/rx';
-import { FaRegCircleCheck } from 'react-icons/fa6';
-import { TbFileInvoice } from 'react-icons/tb';
-import { LiaFileInvoiceSolid } from 'react-icons/lia';
-import { BiBarChartSquare } from 'react-icons/bi';
+import {
+  ArchiveBook, ChartSquare, Check, CloseCircle, DocumentSketch,
+  DocumentText, PlayCircle, Profile2User, TickCircle
+} from 'iconsax-react';
+
 
 export interface ISidebarNavItem {
   title: string;
@@ -21,85 +18,85 @@ export interface ISidebarNavItem {
 
 const sidebarNavItems: ISidebarNavItem[] = [
   {
-    title: 'Dashboard', 
-    icon: <BiBarChartSquare />,
-    label: 'Dashboard',
-    key: 'Dashboard',
-    path: '/dashboard',
+    title: "Dashboard",
+    icon: <ChartSquare size={16} color="#696979" variant="Linear" />,
+    label: "Dashboard",
+    key: "Dashboard",
+    path: "/dashboard",
   },
   {
-    title: 'Nexus',
-    icon: <SlPeople />,
-    label: 'Nexus',
-    key: 'Nexus',
-    path: '/nexus',
+    title: "Nexus",
+    icon: <Profile2User size={16} color="#696979" variant="Linear" />,
+    label: "Nexus",
+    key: "Nexus",
+    path: "/nexus",
   },
   {
-    title: 'Intake',
-    icon: <FiPlayCircle />,
-    label: 'Intake',
-    key: 'Intake',
-    path: '/intake',
+    title: "Intake",
+    icon: <PlayCircle size={16} color="#696979" variant="Linear" />,
+    label: "Intake",
+    key: "Intake",
+    path: "/intake",
   },
   {
-    title: 'Services',
-    icon: <BsJournalBookmark />,
-    label: 'Services',
-    key: 'Services',
+    title: "Services",
+    icon: <ArchiveBook size={16} color="#696979" variant="Linear" />,
+    label: "Services",
+    key: "Services",
     children: [
       {
-        title: 'Pre-active',
-        icon: <FiPlayCircle />,
-        label: 'Pre-active',
-        key: 'Pre-active',
-        path: '/pre-active',
+        title: "Pre-active",
+        icon: <PlayCircle size={16} color="#696979" variant="Linear" />,
+        label: "Pre-active",
+        key: "Pre-active",
+        path: "/pre-active",
       },
       {
-        title: 'Active',
-        icon: <FiBookOpen />,
-        label: 'Active',
-        key: 'Active',
-        path: '/active',
+        title: "Active",
+        icon: <Check size={16} color="#696979" variant="Linear" />,
+        label: "Active",
+        key: "Active",
+        path: "/active",
       },
       {
-        title: 'Blocked',
-        icon: <RxCrossCircled />,
-        label: 'Blocked',
-        key: 'Blocked',
-        path: '/blocked',
+        title: "Blocked",
+        icon: <CloseCircle size={16} color="#696979" variant="Linear" />,
+        label: "Blocked",
+        key: "Blocked",
+        path: "/blocked",
       },
       {
-        title: 'Closed',
-        icon: <FaRegCircleCheck />,
-        label: 'Closed',
-        key: 'Closed',
-        path: '/closed',
+        title: "Closed",
+        icon: <TickCircle size={16} color="#696979" variant="Linear" />,
+        label: "Closed",
+        key: "Closed",
+        path: "/closed",
       },
-    ]
+    ],
   },
   {
-    title: 'Invoices',
-    icon: <TbFileInvoice />,
-    label: 'Invoices',
-    key: 'Invoices',
+    title: "Invoices",
+    icon: <DocumentText size={16} color="#696979" variant="Linear" />,
+    label: "Invoices",
+    key: "Invoices",
     children: [
       {
-        title: 'Proforma-Invoices',
-        icon: <LiaFileInvoiceSolid />,
-        label: 'Proforma-Invoices',
-        key: 'Proforma-Invoices',
-        path: '/proforma-invoices',
+        title: "Proforma-Invoices",
+        icon: <DocumentSketch size={16} color="#696979" variant="Linear" />,
+        label: "Proforma-Invoices",
+        key: "Proforma-Invoices",
+        path: "/proforma-invoices",
       },
       {
-        title: 'Final-Invoices',
-        icon: <LiaFileInvoiceSolid />,
-        label: 'Final-Invoices',
-        key: 'Final-Invoices',
-        path: '/final-invoices',
+        title: "Final-Invoices",
+        icon: <DocumentSketch size={16} color="#696979" variant="Linear" />,
+        label: "Final-Invoices",
+        key: "Final-Invoices",
+        path: "/final-invoices",
       },
-    ]
+    ],
   },
-]
+];
 
 const Sidebar: React.FC = () => {
   return (
