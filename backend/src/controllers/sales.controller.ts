@@ -1,4 +1,5 @@
 import { Request as ExpressRequest, Response as ExpressResponse } from "express";
+import { checkRedisMemoryUsageUnderLimit, getRedisBuffer, setRedisBuffer } from "../config/redis.config";
 import { Sale } from "../models/sale.model";
 
 const toStringArray = (value: any): string[] | undefined => {
@@ -12,6 +13,7 @@ export const getAllSales = async (req: ExpressRequest, res: ExpressResponse) => 
     const {
       page = 1,
       pageSize = 10,
+      sort,
       search,
       customerRegion,
       gender,
@@ -22,8 +24,14 @@ export const getAllSales = async (req: ExpressRequest, res: ExpressResponse) => 
       ageMax,
       dateFrom,
       dateTo,
-      sort,
     } = req.query;
+
+    const redisKey = `sales?page=${page}&pageSize=${pageSize}&sort=${sort}&search=${search}&customerRegion=${customerRegion}&gender=${gender}&productCategory=${productCategory}&tags=${tags}&paymentMethod=${paymentMethod}&ageMin=${ageMin}&ageMax=${ageMax}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
+    const cachedRedisValue = await getRedisBuffer(redisKey);
+    if (cachedRedisValue !== null) {
+      const responseCachedData = JSON.parse(cachedRedisValue.toString());  
+      return res.status(200).json(responseCachedData);
+    }
 
     const pageNum = Number(page) || 1;
     const limit = Number(pageSize) || 10;
@@ -127,7 +135,7 @@ export const getAllSales = async (req: ExpressRequest, res: ExpressResponse) => 
       employeeName: d["Employee Name"],
     }));
 
-    return res.json({
+    const response = {
       data,
       pagination: {
         page: pageNum,
@@ -135,7 +143,11 @@ export const getAllSales = async (req: ExpressRequest, res: ExpressResponse) => 
         totalItems: total,
         totalPages: Math.max(1, Math.ceil(total / limit)),
       },
-    });
+    };
+    if (await checkRedisMemoryUsageUnderLimit()) {
+      await setRedisBuffer(redisKey, Buffer.from(JSON.stringify(response)));      
+    }
+    return res.json(response);
   } catch (err) {
     console.error("getAllSales error:", err);
     return res.status(500).json({ message: "Failed to fetch sales data" });

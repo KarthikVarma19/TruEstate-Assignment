@@ -1,6 +1,11 @@
 import { createClient } from "redis";
 import { APP_CONFIG } from "../env";
 
+/**
+[1] GET /api/sales?page=1&pageSize=10&sort=date_desc 304 361.817 ms - - this is the uncached response
+[1] GET /api/sales?page=1&pageSize=10&sort=date_desc 304 31.897 ms - - this is the cached response
+*/
+
 const client = createClient({
   username: APP_CONFIG.REDIS_USERNAME,
   password: APP_CONFIG.REDIS_PASSWORD,
