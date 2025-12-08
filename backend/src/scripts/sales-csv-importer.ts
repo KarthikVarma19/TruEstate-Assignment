@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import fs from "node:fs";
+import { createReadStream } from "fs";
 import { parse } from "csv-parse";
 import { Sale } from "../models/sale.model"; // 👈 flat collection model
 import { APP_CONFIG } from "../env";
@@ -14,8 +14,7 @@ async function main() {
   });
   console.log("Connected to MongoDB");
 
-  const parser = fs
-    .createReadStream(CSV_PATH)
+  const parser = createReadStream(CSV_PATH)
     .pipe(
       parse({
         columns: true, 
