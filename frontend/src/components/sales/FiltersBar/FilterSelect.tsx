@@ -13,7 +13,6 @@ interface FilterSelectProps {
   icon?: React.ReactNode;
   mode: Mode;
   options?: Option[]; // used for single & multi
-  placeholder?: string;
   width?: string;
   onChange?: (
     value:
@@ -91,24 +90,6 @@ const FilterSelect: React.FC<FilterSelectProps> = ({ label, icon, mode, options 
     onChange?.({ min: minNum, max: maxNum });
     setIsOpen(false);
   };
-
-  // Display text in the main control based on mode
-  let valueLabel = "";
-  if (mode === "single" && singleValue) {
-    const opt = options.find((o) => o.value === singleValue);
-    valueLabel = opt?.label ?? singleValue;
-  } else if (mode === "multi" && multiValues.length > 0) {
-    if (multiValues.length === 1) {
-      const opt = options.find((o) => o.value === multiValues[0]);
-      valueLabel = opt?.label ?? multiValues[0];
-    } else {
-      valueLabel = `${multiValues.length} selected`;
-    }
-  } else if (mode === "range" && (range.min || range.max)) {
-    valueLabel = `${range.min || "any"} - ${range.max || "any"}`;
-  } else if (mode === "dateRange" && (dateRange.from || dateRange.to)) {
-    valueLabel = `${dateRange.from || "any"} - ${dateRange.to || "any"}`;
-  }
 
   const handleDateRangeChange = (key: "from" | "to", val: string) => {
     setDateRange((prev) => ({

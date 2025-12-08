@@ -200,13 +200,30 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return () => controller.abort();
   }, [queryString]);
 
-  const ctxValue: SalesContextValue = {
-    data, loading, error, filters, sort, pagination,
-    setPage, setPageSize, updateFilters, resetFilters, setSort
-  };
+  
+
+
+
+ const ctxValue = useMemo(
+   () => ({
+     data,
+     loading,
+     error,
+     filters,
+     sort,
+     pagination,
+     setPage,
+     setPageSize,
+     updateFilters,
+     resetFilters,
+     setSort,
+   }),
+   [data, loading, error, filters, sort, pagination, setPage, setPageSize, updateFilters, resetFilters, setSort] // dependencies
+ );
 
   return <SalesContext.Provider value={ctxValue}>{children}</SalesContext.Provider>;
 };
+
 // eslint-disable-next-line react-refresh/only-export-components
 export const useSales = () => {
   const ctx = useContext(SalesContext);
