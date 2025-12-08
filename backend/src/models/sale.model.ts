@@ -1,39 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-
-export interface ISale {
-  "Transaction ID": string;
-  "Date": string; 
-
-  "Customer ID": string;
-  "Customer Name": string;
-  "Phone Number": string;
-  "Gender": string;
-  "Age": number;
-  "Customer Region": string;
-  "Customer Type": string;
-
-  "Product ID": string;
-  "Product Name": string;
-  "Brand": string;
-  "Product Category": string;
-  "Tags": string[]; 
-
-  "Quantity": number;
-  "Price per Unit": number;
-  "Discount Percentage": number;
-  "Total Amount": number;
-  "Final Amount": number;
-
-  "Payment Method": string;
-  "Order Status": string;
-  "Delivery Type": string;
-
-  "Store ID": string;
-  "Store Location": string;
-
-  "Salesperson ID": string;
-  "Employee Name": string;
-}
+import { Gender, CustomerRegion, ProductCategory, PaymentMethod, CustomerType, OrderStatus, DeliveryType } from "../constants/enum";
+import { ISale } from "../interfaces/sale.interface";
 
 const SaleSchema = new Schema<ISale>(
   {
@@ -43,15 +10,15 @@ const SaleSchema = new Schema<ISale>(
     "Customer ID": { type: String, required: true },
     "Customer Name": { type: String, required: true },
     "Phone Number": { type: String, required: true },
-    "Gender": { type: String, required: true },
+    "Gender": { type: String, enum: Object.values(Gender), required: true },
     "Age": { type: Number, required: true },
-    "Customer Region": { type: String, required: true },
-    "Customer Type": { type: String, required: true },
+    "Customer Region": { type: String, enum: Object.values(CustomerRegion), required: true },
+    "Customer Type": { type: String, enum: Object.values(CustomerType), required: true },
 
     "Product ID": { type: String, required: true },
     "Product Name": { type: String, required: true },
     "Brand": { type: String, required: true },
-    "Product Category": { type: String, required: true },
+    "Product Category": { type: String, enum: Object.values(ProductCategory), required: true },
 
     "Tags": { type: [String], required: true },
 
@@ -61,9 +28,9 @@ const SaleSchema = new Schema<ISale>(
     "Total Amount": { type: Number, required: true },
     "Final Amount": { type: Number, required: true },
 
-    "Payment Method": { type: String, required: true },
-    "Order Status": { type: String, required: true },
-    "Delivery Type": { type: String, required: true },
+    "Payment Method": { type: String, enum: Object.values(PaymentMethod), required: true },
+    "Order Status": { type: String, enum: Object.values(OrderStatus), required: true },
+    "Delivery Type": { type: String, enum: Object.values(DeliveryType), required: true },
 
     "Store ID": { type: String, required: true },
     "Store Location": { type: String, required: true },
