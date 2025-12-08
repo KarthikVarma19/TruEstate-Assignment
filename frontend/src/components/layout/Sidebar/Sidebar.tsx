@@ -1,11 +1,11 @@
-import React from 'react'
-import SidebarHeader from './SidebarHeader'
-import SidebarNavSection from './SidebarNavSection'
+import React, { useState } from "react";
 import {
-  ArchiveBook, ChartSquare, Check, CloseCircle, DocumentSketch,
-  DocumentText, PlayCircle, Profile2User, TickCircle
-} from 'iconsax-react';
-
+  ArchiveBook, ChartSquare, Check, CloseCircle, DocumentSketch, DocumentText,
+  PlayCircle, Profile2User, TickCircle, ArrowUp2, ArrowDown2
+} from "iconsax-react";
+import Avatar from "../../ui/Avatar";
+import NavItem from "./NavItem/NavItem";
+import "./Sidebar.css";
 
 export interface ISidebarNavItem {
   title: string;
@@ -16,7 +16,7 @@ export interface ISidebarNavItem {
   path?: string;
 }
 
-const sidebarNavItems: ISidebarNavItem[] = [
+const sidebarNavItems: ISidebarNavItem[] | ISidebarNavItem = [
   {
     title: "Dashboard",
     icon: <ChartSquare size={16} color="#696979" variant="Linear" />,
@@ -99,12 +99,38 @@ const sidebarNavItems: ISidebarNavItem[] = [
 ];
 
 const Sidebar: React.FC = () => {
-  return (
-    <div className='col-span-1 bg-[#F3F3F3] h-screen p-2 text-left'>
-      <SidebarHeader />
-      <SidebarNavSection items={sidebarNavItems} />
-    </div>
-  )
-}
+  const user: { name: string, organization: string } = {
+    name: "Karthik Varma",
+    organization: "Vault",
+  };
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
-export default Sidebar
+  return (
+    <div className="col-span-1 bg-[#F3F3F3] h-screen text-left w-[220px]">
+      {/* Sidebar Header */}
+      <div className="sidebar-header">
+        <div className="flex items-center justify-start rounded-sm bg-white border border-[#D3D4DD] sidebar-header-container">
+          <div className="sidebar-header-avatar-container flex items-center justify-start">
+            <Avatar src="/vault-logo.png" name="Vault" size="sm" rounded={false} className="sidebar-header-avatar" />
+            <div className="flex flex-col sidebar-header-avatar-text-container">
+              <h6 className="sidebar-header-avatar-text-container-title">{user.organization}</h6>
+              <p className="sidebar-header-avatar-text-container-subtitle">{user.name}</p>
+            </div>
+          </div>
+          <div className="ml-auto">{isOpen ? <ArrowUp2 size={16} color="#696979" variant="Linear" className="cursor-pointer" onClick={() => setIsOpen(false)} /> : <ArrowDown2 size={16} color="#696979" variant="Linear" className="cursor-pointer" onClick={() => setIsOpen(true)} />}</div>
+        </div>
+      </div>
+      {/* Sidebar Navigation */}
+      <div className="sidebar-nav-section">
+        <div className="flex flex-col gap-[6px]">
+          {
+            sidebarNavItems.map((item: ISidebarNavItem) =>
+            <NavItem key={item.key} icon={item.icon} label={item.label} items={item.children} path={item.path} />)
+          }
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;
