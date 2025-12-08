@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
     // File Layout
-    "rootDir": "./src",
-    "outDir": "./dist",
+    "rootDir": "src",
+    "outDir": "dist",
 
     // Environment Settings
-    "module": "nodenext",
-    "target": "esnext",
     "types": ["node", "mongodb", "redis"],
 
     // Other Outputs
@@ -25,7 +25,9 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
