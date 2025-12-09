@@ -3,9 +3,9 @@ import {
   ArchiveBook, ChartSquare, Check, CloseCircle, DocumentSketch, DocumentText,
   PlayCircle, Profile2User, TickCircle, ArrowUp2, ArrowDown2
 } from "iconsax-react";
-import Avatar from "../../ui/Avatar";
-import NavItem from "./NavItem/NavItem";
-import "./Sidebar.css";
+import Avatar from "../../components/Avatar/Avatar.tsx";
+import NavItem from "../../components/NavItem/NavItem.tsx";
+import "../../styles/Sidebar.css";
 
 export interface ISidebarNavItem {
   title: string;
@@ -99,7 +99,7 @@ const sidebarNavItems: ISidebarNavItem[] | ISidebarNavItem = [
 ];
 
 const Sidebar: React.FC = () => {
-  const user: { name: string, organization: string } = {
+  const user: { name: string; organization: string } = {
     name: "Karthik Varma",
     organization: "Vault",
   };
@@ -123,10 +123,9 @@ const Sidebar: React.FC = () => {
       {/* Sidebar Navigation */}
       <div className="sidebar-nav-section">
         <div className="flex flex-col gap-[6px]">
-          {
-            sidebarNavItems.map((item: ISidebarNavItem) =>
-            <NavItem key={item.key} icon={item.icon} label={item.label} items={item.children} path={item.path} />)
-          }
+          {sidebarNavItems.map((item: ISidebarNavItem) => (
+            <NavItem key={item.key} icon={item.icon} label={item.label} items={item.children} path={item.path} />
+          ))}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { type NavigateFunction, useNavigate } from "react-router-dom";
 import { ArrowDown2, ArrowUp2 } from "iconsax-react";
-import "./NavItem.css";
+import "../../styles/NavItem.css";
 
 interface INavItem {
   key: string;

@@ -1,23 +1,21 @@
-import { Routes, Route } from "react-router-dom";
-import './App.css'
-import AppLayout from './components/layout/AppLayout'
+import React from "react";
+import Sidebar from "./pages/Sidebar/Sidebar.tsx";
+import "./App.css";
+import { Outlet } from "react-router-dom";
 
-function App() {
-
+const App: React.FC = () => {
   return (
-    <Routes>
-      <Route path="/" element={<AppLayout />}></Route>
-      <Route path="/dashboard" element={<AppLayout />}></Route>
-      <Route path="/nexus" element={<AppLayout />}></Route>
-      <Route path="/intake" element={<AppLayout />}></Route>
-      <Route path="/pre-active" element={<AppLayout />}></Route>
-      <Route path="/active" element={<AppLayout />}></Route>
-      <Route path="/blocked" element={<AppLayout />}></Route>
-      <Route path="/closed" element={<AppLayout />}></Route>
-      <Route path="/proforma-invoices" element={<AppLayout />}></Route>
-      <Route path="/final-invoices" element={<AppLayout />}></Route>
-    </Routes>
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar */}
+      <div className="h-full w-[15%] shrink-0">
+        <Sidebar />
+      </div>
+      {/* Main content area */}
+      <div className="flex-1 overflow-auto">
+        <Outlet />
+      </div>
+    </div>
   );
-}
+};
 
-export default App
+export default App;

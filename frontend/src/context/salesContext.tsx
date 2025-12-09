@@ -2,6 +2,7 @@ import React,{
   createContext, useContext, useState, useEffect,
   useMemo, useCallback, type ReactNode
 } from "react";
+import { BACKEND_URL } from "../utils/constants";
 
 export interface SalesRecord {
   transactionId: string;
@@ -196,8 +197,7 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setLoading(true);
         setError(null);
 
-        // https://truestate-assignment-backend-n4p9.onrender.com
-        const res = await fetch(`http://localhost:5555/api/sales?${queryString}`, {
+        const res = await fetch(`${BACKEND_URL}/api/sales?${queryString}`, {
           signal: controller.signal,
           cache: "no-store",
         });

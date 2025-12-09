@@ -1,5 +1,5 @@
 import React from "react";
-import { Tooltip } from "../../ui/Tooltip";
+import { Tooltip } from "../ToolTip/Tooltip";
 import { InfoCircle } from "iconsax-react";
 
 interface IStatsCardProps {
@@ -9,12 +9,7 @@ interface IStatsCardProps {
   tooltip?: string;
 }
 
-const StatsCard: React.FC<IStatsCardProps> = ({
-  title,
-  value,
-  highlight = true,
-  tooltip,
-}) => {
+const StatsCard: React.FC<IStatsCardProps> = ({ title, value, highlight = true, tooltip }) => {
   return (
     <div className="flex flex-col justify-between stats-card">
       {/* Top: title + info icon */}
@@ -29,9 +24,7 @@ const StatsCard: React.FC<IStatsCardProps> = ({
 
       {/* Bottom: value */}
       <div className="flex items-center">
-        <span className={`${highlight ? "font-semibold text-[14px]" : "font-medium text-[16px]"} text-[#101017] whitespace-nowrap`}>
-          {value.toLocaleString()}
-        </span>
+        <span className={`${highlight ? "font-semibold text-[14px]" : "font-medium text-[16px]"} text-[#101017] whitespace-nowrap`}>{value.toLocaleString()}</span>
       </div>
     </div>
   );

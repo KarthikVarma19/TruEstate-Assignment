@@ -8,7 +8,7 @@ interface Option {
   value: string;
 }
 
-interface FilterSelectProps {
+interface DropdownProps {
   label: string;
   icon?: React.ReactNode;
   mode: Mode;
@@ -26,7 +26,7 @@ interface FilterSelectProps {
   ) => void;
 }
 
-const FilterSelect: React.FC<FilterSelectProps> = ({ label, icon, mode, options = [], onChange, width, showSelectedValue, defaultSelectedValue }: FilterSelectProps) => {
+const Dropdown: React.FC<DropdownProps> = ({ label, icon, mode, options = [], onChange, width, showSelectedValue, defaultSelectedValue }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValueLabel, setSelectedValueLabel] = useState<string | null>(defaultSelectedValue ? options.find((opt) => opt.value === defaultSelectedValue)?.label || null : null);
 
@@ -206,4 +206,4 @@ const FilterSelect: React.FC<FilterSelectProps> = ({ label, icon, mode, options 
   );
 };
 
-export default FilterSelect;
+export default Dropdown;
