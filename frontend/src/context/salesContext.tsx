@@ -171,7 +171,7 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`http://localhost:5555/api/sales?${queryString}`, {
+        const res = await fetch(`https://truestate-assignment-backend-n4p9.onrender.com/api/sales?${queryString}`, {
           signal: controller.signal,
         });
 

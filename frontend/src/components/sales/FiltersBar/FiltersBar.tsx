@@ -184,30 +184,12 @@ const FiltersBar: React.FC = () => {
           mode="multi"
           width="min-w-[200px]"
           options={[
-            { label: "Transaction ID (ASC)", value: "transactionId_asc" },
-            { label: "Transaction ID (DESC)", value: "transactionId_desc" },
-            { label: "Date (Newest)", value: "date_desc" },
-            { label: "Date (Oldest)", value: "date_asc" },
-            { label: "Customer ID (ASC)", value: "customerId_asc" },
-            { label: "Customer ID (DESC)", value: "customerId_desc" },
+            { label: "Date (Newest First)", value: "date_desc" },
+            { label: "Date (Oldest First)", value: "date_asc" },
             { label: "Customer Name (A-Z)", value: "customerName_asc" },
             { label: "Customer Name (Z-A)", value: "customerName_desc" },
-            { label: "Gender (A-Z)", value: "gender_asc" },
-            { label: "Gender (Z-A)", value: "gender_desc" },
-            { label: "Age (Lowest)", value: "age_asc" },
-            { label: "Age (Highest)", value: "age_desc" },
-            { label: "Product Category (A-Z)", value: "productCategory_asc" },
-            { label: "Product Category (Z-A)", value: "productCategory_desc" },
             { label: "Quantity (ASC)", value: "quantity_asc" },
             { label: "Quantity (DESC)", value: "quantity_desc" },
-            { label: "Total Amount (ASC)", value: "totalAmount_asc" },
-            { label: "Total Amount (DESC)", value: "totalAmount_desc" },
-            { label: "Customer Region (A-Z)", value: "customerRegion_asc" },
-            { label: "Customer Region (Z-A)", value: "customerRegion_desc" },
-            { label: "Product ID (ASC)", value: "productId_asc" },
-            { label: "Product ID (DESC)", value: "productId_desc" },
-            { label: "Employee Name (A-Z)", value: "employeeName_asc" },
-            { label: "Employee Name (Z-A)", value: "employeeName_desc" },
           ]}
           onChange={(value) => {
             let values: string[];
