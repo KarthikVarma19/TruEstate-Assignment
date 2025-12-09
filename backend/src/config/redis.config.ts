@@ -41,7 +41,7 @@ export async function setRedisValue(key: string, value: string, expirySeconds?: 
   }
 }
 
-export async function removeAllRedisKey(): Promise<void> {
+export async function flushAllRedis(): Promise<void> {
   await client.flushAll();
 }
 

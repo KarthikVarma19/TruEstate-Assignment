@@ -100,7 +100,7 @@ export const buildMongoQuery = (params: Partial<SaleQueryParams>) => {
 export const buildSortObject = (sort?: string | null) => {
   const sortObj: any = {};
   if (sort) {
-    const [field, dir] = (sort as string).split("_");
+    const [field, dir] = (sort).split("_");
     const dirNum = dir === "desc" ? -1 : 1;
     const sortMap: Record<string, string> = {
       date: "Date",
@@ -157,7 +157,44 @@ export const getSales = async (params: Partial<SaleQueryParams>) => {
     Sale.countDocuments(query),
   ]);
 
+
+
   const data = items.map(mapSaleDocument);
+
+  let totalUnitsSold = 0;
+  let totalAmount = 0;
+  let finalAmount = 0;
+
+  try {
+    const agg = await Sale.aggregate([
+      { $match: query },
+      {
+        $group: {
+          _id: null,
+          totalUnitsSold: { $sum: { $toDouble: { $ifNull: ["$Quantity", 0] } } },
+          totalAmount: { $sum: { $toDouble: { $ifNull: ["$Total Amount", 0] } } },
+          finalAmount: { $sum: { $toDouble: { $ifNull: ["$Final Amount", 0] } } },
+        },
+      },
+    ]);
+
+    if (agg && agg.length > 0) {
+      totalUnitsSold = agg[0].totalUnitsSold ?? 0;
+      totalAmount = agg[0].totalAmount ?? 0;
+      finalAmount = agg[0].finalAmount ?? 0;
+    }
+  } catch (aggErr) {
+    console.warn("Aggregation for sales stats failed, falling back to page-level sums:", aggErr);
+    for (const it of items) {
+      const qty = Number(it["Quantity"] ?? 0);
+      const tAmt = Number(it["Total Amount"] ?? 0);
+      const fAmt = Number(it["Final Amount"] ?? tAmt); // if Final Amount missing, fallback to Total
+      totalUnitsSold += Number.isFinite(qty) ? qty : 0;
+      totalAmount += Number.isFinite(tAmt) ? tAmt : 0;
+      finalAmount += Number.isFinite(fAmt) ? fAmt : 0;
+    }
+  }
+
 
   const response = {
     data,
@@ -167,6 +204,11 @@ export const getSales = async (params: Partial<SaleQueryParams>) => {
       totalItems: total,
       totalPages: Math.max(1, Math.ceil(total / limit)),
     },
+    stats: {
+      totalUnitsSold: totalUnitsSold,
+      totalAmount: totalAmount,
+      totalDiscount: totalAmount - finalAmount,
+    }
   };
 
   if (await checkRedisMemoryUsageUnderLimit()) {
