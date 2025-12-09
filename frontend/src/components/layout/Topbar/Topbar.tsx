@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import './Topbar.css';
-import { SearchNormal1 } from 'iconsax-react';
-import { useSales } from '../../../context/salesContext';
+import React, { useEffect, useState } from "react";
+import { SearchNormal1 } from "iconsax-react";
+import { useSales } from "../../../context/salesContext";
+import "./Topbar.css";
 
 interface TopbarProps {
   title?: string;
@@ -10,12 +10,14 @@ interface TopbarProps {
 }
 
 const Topbar: React.FC<TopbarProps> = ({ title, subtitle, searchPlaceholder }) => {
-
   const { updateFilters } = useSales();
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-    updateFilters({ search: searchValue }); 
+    const timeout = setTimeout(() => {
+      updateFilters({ search: searchValue });
+    }, 300);
+    return () => clearTimeout(timeout);
   }, [updateFilters, searchValue]);
 
   return (
@@ -30,11 +32,18 @@ const Topbar: React.FC<TopbarProps> = ({ title, subtitle, searchPlaceholder }) =
       <div className="flex flex-col items-start topbar-search-input">
         <div className="flex flex-row items-center justify-center rounded-md gap-2">
           <SearchNormal1 size={16} color="#3A3A47" variant="Linear" />
-          <input type="search" placeholder={searchPlaceholder} className="w-[350px] h-full bg-transparent text-black focus:outline-none" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              updateFilters({ search: searchValue });
-            }
-          }} />
+          <input
+            type="search"
+            placeholder={searchPlaceholder}
+            className="w-[350px] h-full bg-transparent text-black focus:outline-none"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                updateFilters({ search: searchValue });
+              }
+            }}
+          />
         </div>
       </div>
     </div>
