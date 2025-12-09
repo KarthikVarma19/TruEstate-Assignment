@@ -14,6 +14,8 @@ interface FilterSelectProps {
   mode: Mode;
   options?: Option[]; // used for single & multi
   width?: string;
+  showSelectedValue?: boolean;
+  defaultSelectedValue?: string;
   onChange?: (
     value:
       | string // single
@@ -24,11 +26,12 @@ interface FilterSelectProps {
   ) => void;
 }
 
-const FilterSelect: React.FC<FilterSelectProps> = ({ label, icon, mode, options = [], onChange, width }: FilterSelectProps) => {
+const FilterSelect: React.FC<FilterSelectProps> = ({ label, icon, mode, options = [], onChange, width, showSelectedValue, defaultSelectedValue }: FilterSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedValueLabel, setSelectedValueLabel] = useState<string | null>(defaultSelectedValue ? options.find((opt) => opt.value === defaultSelectedValue)?.label || null : null);
 
   // single select
-  const [singleValue, setSingleValue] = useState<string | null>(null);
+  const [singleValue, setSingleValue] = useState<string | null>(defaultSelectedValue || null);
 
   // multi select
   const [multiValues, setMultiValues] = useState<string[]>([]);
@@ -45,13 +48,13 @@ const FilterSelect: React.FC<FilterSelectProps> = ({ label, icon, mode, options 
     to: "",
   });
 
-
   const toggleOpen = () => {
-      setIsOpen((prev) => !prev);
+    setIsOpen((prev) => !prev);
   };
 
   const handleSingleSelect = (value: string) => {
     setSingleValue(value);
+    setSelectedValueLabel(options.find((opt) => opt.value === value)?.label || null);
     onChange?.(value);
     setIsOpen(false);
   };
@@ -113,31 +116,28 @@ const FilterSelect: React.FC<FilterSelectProps> = ({ label, icon, mode, options 
   };
 
   return (
-    <div className="relative inline-block text-left min-h-11 cursor-pointer w-fit">
+    <div className="relative inline-block text-left min-h-11 w-full filter-container">
       {/* Trigger */}
-      <button type="button" onClick={toggleOpen} className={`flex items-center gap-1 px-2 py-1 border border-gray-300 rounded-md bg-[#F3F3F3] hover:bg-gray-50 ${width}`}>
+      <button type="button" onClick={toggleOpen} className={`flex items-center gap-1 px-2 py-1 border border-gray-300 rounded-md bg-[#F3F3F3] hover:bg-gray-50 ${width} cursor-pointer`}>
         {/* Logo / icon */}
         {icon && <span className="text-gray-600">{icon}</span>}
 
         {/* Label and value */}
-        <div className="flex flex-col items-start min-w-0">
-          <span className="text-xs text-gray-500 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 block">{label}</span>
-          {/* <span className="text-[10px] text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 block">{valueLabel || "Any"}</span> */}
+        <div className="flex flex-row items-start min-w-0">
+          <span className="text-xs text-gray-500 overflow-hidden text-ellipsis whitespace-nowrap min-w-0 block">{label + (showSelectedValue ? `${selectedValueLabel || ""}` : "")}</span>
         </div>
 
         {/* Arrow */}
         <span className="ml-auto text-gray-500">
-          <span className={`inline-block transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}>
-            {isOpen ? <ArrowUp2 size={16} color="#515162" variant="Linear" /> : <ArrowDown2 size={16} color="#515162" variant="Linear" />}
-          </span>
+          <span className={`inline-block transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}>{isOpen ? <ArrowUp2 size={16} color="#515162" variant="Linear" /> : <ArrowDown2 size={16} color="#515162" variant="Linear" />}</span>
         </span>
       </button>
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-full rounded-md bg-white shadow-lg border border-gray-200 z-20 cursor-pointer">
+        <div className={`absolute left-0 mt-2 rounded-md bg-white shadow-lg border border-gray-200 z-20 cursor-pointer dropdown-container ${width}`}>
           {mode === "single" && (
-            <ul className="max-h-64 overflow-y-auto py-2">
+            <ul className="max-h-64 overflow-y-auto py-2 scrollbar-hide">
               {options.map((opt) => (
                 <li key={opt.value}>
                   <button type="button" onClick={() => handleSingleSelect(opt.value)} className={`w-full text-left px-3 py-2 text-xs hover:bg-gray-100 ${singleValue === opt.value ? "bg-gray-100 font-medium" : ""}`}>

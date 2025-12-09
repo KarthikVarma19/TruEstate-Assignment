@@ -6,10 +6,10 @@ import { ArrowRotateLeft } from "iconsax-react";
 import "./FiltersBar.css";
 
 const FiltersBar: React.FC = () => {
-  const { updateFilters, resetFilters, setSort } = useSales();
+  const { updateFilters, resetFiltersAndTableData, setSort } = useSales();
 
   const handleReload = () => {
-    resetFilters();
+    resetFiltersAndTableData();
   };
 
   const parseSortValues = (values: string[]): SortRule[] => {
@@ -24,14 +24,12 @@ const FiltersBar: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-row items-center bg-white h-[62px]">
+    <div className="flex flex-row items-center bg-white h-[62px] filter-container">
       <div className="flex items-center gap-2">
         {/* Reload */}
-        <div>
-          <button type="button" onClick={handleReload} className="flex items-center filters-bar-reload border border-gray-300 rounded-md bg-[#F3F3F3] hover:bg-gray-50  cursor-pointer">
-            <ArrowRotateLeft size={16} color="#515162" variant="Linear" />
-          </button>
-        </div>
+        <button type="button" onClick={handleReload} className="flex items-center filters-bar-reload border border-gray-300 rounded-md bg-[#F3F3F3] hover:bg-gray-50  cursor-pointer m-0 p-0">
+          <ArrowRotateLeft size={16} color="#515162" variant="Linear" />
+        </button>
         {/* Customer Region (multi) */}
         <FilterSelect
           label="Customer Region"
@@ -165,7 +163,7 @@ const FiltersBar: React.FC = () => {
         <FilterSelect
           label="Date"
           mode="dateRange"
-          width="min-w-[150px]"
+          width="min-w-[70px]"
           onChange={(value) => {
             if (typeof value === "object" && value !== null && "start" in value && "end" in value) {
               const v = value as { start: string | null; end: string | null };
@@ -181,16 +179,16 @@ const FiltersBar: React.FC = () => {
       <div className="flex ml-auto items-center gap-2">
         <FilterSelect
           label="Sort by: "
-          mode="multi"
+          mode="single"
           width="min-w-[200px]"
           options={[
             { label: "Date (Newest First)", value: "date_desc" },
-            { label: "Date (Oldest First)", value: "date_asc" },
-            { label: "Customer Name (A-Z)", value: "customerName_asc" },
-            { label: "Customer Name (Z-A)", value: "customerName_desc" },
             { label: "Quantity (ASC)", value: "quantity_asc" },
             { label: "Quantity (DESC)", value: "quantity_desc" },
+            { label: "Customer Name (A-Z)", value: "customerName_asc" },
           ]}
+          showSelectedValue={true}
+          defaultSelectedValue="date_desc"
           onChange={(value) => {
             let values: string[];
             if (Array.isArray(value)) {

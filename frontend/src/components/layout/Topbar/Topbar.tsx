@@ -30,8 +30,8 @@ const Topbar: React.FC<TopbarProps> = ({ title, subtitle, searchPlaceholder }) =
 
       {/* RIGHT SIDE */}
       <div className="flex flex-col items-start topbar-search-input">
-        <div className="flex flex-row items-center justify-center rounded-md gap-2">
-          <SearchNormal1 size={16} color="#3A3A47" variant="Linear" />
+        <div className="flex flex-row items-start justify-start rounded-md gap-2 h-8 w-[400px]">
+          <SearchNormal1 size={16} color="#3A3A47" variant="Linear" className="flex flex-col items-center"/>
           <input
             type="search"
             placeholder={searchPlaceholder}

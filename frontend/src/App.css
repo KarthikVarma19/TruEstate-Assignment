@@ -55,7 +55,7 @@ input[type="date"]::-moz-placeholder {
 }
 
 .table-pagination-divider {
-  width: auto;
+  width: 100%;
   height: 1px;
   color: #b3a9a93f !important;
 }
@@ -73,8 +73,6 @@ input[type="date"]::-moz-placeholder {
   height: 62px;
   gap: 16px;
   opacity: 1;
-  padding-right: 16px;
-  padding-left: 16px;
 }
 
 .stats-card {
@@ -112,4 +110,14 @@ input[type="date"]::-moz-placeholder {
   justify-content: space-between;
   padding: 6px 18px;
   border-bottom: 1px solid #F3F3F3;
+}
+
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }

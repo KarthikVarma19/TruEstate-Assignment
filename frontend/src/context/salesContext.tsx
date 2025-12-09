@@ -70,7 +70,7 @@ interface SalesContextValue {
   setPageSize: (size: number) => void;
 
   updateFilters: (partial: Partial<SalesFilters>) => void;
-  resetFilters: () => void;
+  resetFiltersAndTableData: () => void;
 
   setSort: (rules: SortRule[]) => void;
 }
@@ -131,14 +131,16 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setPagination((prev) => ({ ...prev, page: 1 }));
   }, []);
 
-  const resetFilters = useCallback(() => {
+  const resetFiltersAndTableData = useCallback(() => {
     setFilters(DEFAULT_FILTERS);
     setStats({
       totalUnitsSold: 0,
       totalAmount: 0,
       totalDiscount: 0,
     });
-    setPagination((prev) => ({ ...prev, page: 1 }));
+    setPagination({page: 1, pageSize: 10, totalItems: 0, totalPages: 1});
+    setData([]);
+    updateFilters({});
   }, []);
 
 
@@ -251,12 +253,12 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
      setPage,
      setPageSize,
      updateFilters,
-     resetFilters,
+     resetFiltersAndTableData,
      setSort,
      updateStats,
      stats,
    }),
-   [data, loading, error, filters, sort, pagination, setPage, setPageSize, updateFilters, resetFilters, setSort, updateStats, stats] // dependencies
+   [data, loading, error, filters, sort, pagination, setPage, setPageSize, updateFilters, resetFiltersAndTableData, setSort, updateStats, stats] // dependencies
  );
 
   return <SalesContext.Provider value={ctxValue}>{children}</SalesContext.Provider>;

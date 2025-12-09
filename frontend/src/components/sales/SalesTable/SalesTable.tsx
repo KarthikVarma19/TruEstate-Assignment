@@ -10,8 +10,8 @@ const SalesTable: React.FC = () => {
   const { data, loading } = useSales();
 
   return (
-    <div className="w-full bg-white rounded-xl p-2 table-wrapper">
-      <div className="overflow-auto">
+    <div className="w-full bg-white table-wrapper">
+      <div className="overflow-auto scrollbar-hide">
         <table className="min-w-full border-collapse whitespace-nowrap">
           <thead className="sticky top-0">
             <tr className="bg-[#F3F3F3] text-xs text-[#515162] h-[40px]">
