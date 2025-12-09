@@ -48,6 +48,12 @@ export interface PaginationState {
   totalPages: number;
 }
 
+export interface SalesStats {
+  totalUnitsSold: number;
+  totalAmount: number;
+  totalDiscount: number;
+}
+
 interface SalesContextValue {
   data: SalesRecord[];
   loading: boolean;
@@ -56,6 +62,9 @@ interface SalesContextValue {
   filters: SalesFilters;
   sort: SortRule[];
   pagination: PaginationState;
+
+  stats: SalesStats; 
+  updateStats: (stats: SalesStats) => void; 
 
   setPage: (page: number) => void;
   setPageSize: (size: number) => void;
@@ -93,6 +102,11 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   });
 
   const [data, setData] = useState<SalesRecord[]>([]);
+  const [stats, setStats] = useState<SalesStats>({
+    totalUnitsSold: 0,
+    totalAmount: 0,
+    totalDiscount: 0,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -104,16 +118,26 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setPagination((prev) => ({ ...prev, pageSize: size, page: 1 }));
   }, []);
 
+  const updateStats = useCallback((stats: SalesStats) => {
+    setStats((prev) => ({ ...prev, ...stats }));
+  }, []);
+
   const updateFilters = useCallback((partial: Partial<SalesFilters>) => {
     setFilters((prev) => ({
       ...prev,
       ...partial,
     }));
+
     setPagination((prev) => ({ ...prev, page: 1 }));
   }, []);
 
   const resetFilters = useCallback(() => {
     setFilters(DEFAULT_FILTERS);
+    setStats({
+      totalUnitsSold: 0,
+      totalAmount: 0,
+      totalDiscount: 0,
+    });
     setPagination((prev) => ({ ...prev, page: 1 }));
   }, []);
 
@@ -162,7 +186,6 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return params.toString();
   }, [filters, pagination.page, pagination.pageSize, sort]);
 
-
   useEffect(() => {
     const controller = new AbortController();
 
@@ -171,8 +194,10 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`https://truestate-assignment-backend-n4p9.onrender.com/api/sales?${queryString}`, {
+        // https://truestate-assignment-backend-n4p9.onrender.com
+        const res = await fetch(`http://localhost:5555/api/sales?${queryString}`, {
           signal: controller.signal,
+          cache: "no-store",
         });
 
         if (!res.ok) {
@@ -183,9 +208,23 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setData(json.data || []);
         setPagination((prev) => ({
           ...prev,
-          totalItems: json.pagination?.totalItems ?? 0,
-          totalPages: json.pagination?.totalPages ?? 1,
+          totalItems: Number(json.pagination?.totalItems ?? 0),
+          totalPages: Number(json.pagination?.totalPages ?? 1),
         }));
+
+        const rawStats = json.stats ?? {};
+        const totalUnitsSoldRaw = rawStats.totalUnitsSold ?? rawStats.total_units_sold ?? rawStats.units ?? 0;
+        const totalAmountRaw = rawStats.totalAmount ?? rawStats.total_amount ?? rawStats.finalAmount ?? 0;
+        const finalAmountRaw = rawStats.finalAmount ?? rawStats.final_amount ?? rawStats.totalAmount ?? totalAmountRaw;
+        const totalDiscountRaw = rawStats.totalDiscount ?? rawStats.total_discount ?? Number(finalAmountRaw) - Number(totalAmountRaw);
+
+        const normalizedStats: SalesStats = {
+          totalUnitsSold: Number(totalUnitsSoldRaw) || 0,
+          totalAmount: Number(totalAmountRaw) || 0,
+          totalDiscount: Number(totalDiscountRaw) || 0,
+        };
+
+        setStats(normalizedStats);
       } catch (err: unknown) {
         if (err instanceof Error && err.name === "AbortError") return;
         console.error("fetch sales error:", err);
@@ -199,9 +238,6 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     return () => controller.abort();
   }, [queryString]);
-
-  
-
 
 
  const ctxValue = useMemo(
@@ -217,8 +253,10 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
      updateFilters,
      resetFilters,
      setSort,
+     updateStats,
+     stats,
    }),
-   [data, loading, error, filters, sort, pagination, setPage, setPageSize, updateFilters, resetFilters, setSort] // dependencies
+   [data, loading, error, filters, sort, pagination, setPage, setPageSize, updateFilters, resetFilters, setSort, updateStats, stats] // dependencies
  );
 
   return <SalesContext.Provider value={ctxValue}>{children}</SalesContext.Provider>;

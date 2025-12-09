@@ -29,7 +29,9 @@ const StatsCard: React.FC<IStatsCardProps> = ({
 
       {/* Bottom: value */}
       <div className="flex items-center">
-        <span className={`${highlight ? "font-semibold text-[14px]" : "font-medium text-[16px]"} text-[#101017]`}>{value}</span>
+        <span className={`${highlight ? "font-semibold text-[14px]" : "font-medium text-[16px]"} text-[#101017] whitespace-nowrap`}>
+          {value.toLocaleString()}
+        </span>
       </div>
     </div>
   );
