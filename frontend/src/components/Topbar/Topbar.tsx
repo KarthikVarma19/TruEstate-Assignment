@@ -10,15 +10,21 @@ interface TopbarProps {
 }
 
 const Topbar: React.FC<TopbarProps> = ({ title, subtitle, searchPlaceholder }) => {
-  const { updateFilters } = useSales();
+  const { updateFilters, filters } = useSales();
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
+    setTimeout(() => {
+      setSearchValue(filters.search ?? "");
+    }, 0);
+  }, [filters.search]);
+
+  useEffect(() => {
     const timeout = setTimeout(() => {
-      updateFilters({ search: searchValue });
-    }, 300);
+      if (filters.search !== searchValue) updateFilters({ search: searchValue });
+    }, 0);
     return () => clearTimeout(timeout);
-  }, [updateFilters, searchValue]);
+  }, [updateFilters, filters.search, searchValue]);
 
   return (
     <div className="flex flex-row items-center justify-between w-full">

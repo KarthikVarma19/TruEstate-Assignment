@@ -64,8 +64,8 @@ interface SalesContextValue {
   sort: SortRule[];
   pagination: PaginationState;
 
-  stats: SalesStats; 
-  updateStats: (stats: SalesStats) => void; 
+  stats: SalesStats;
+  updateStats: (stats: SalesStats) => void;
 
   setPage: (page: number) => void;
   setPageSize: (size: number) => void;
@@ -78,7 +78,8 @@ interface SalesContextValue {
 
 const SalesContext = createContext<SalesContextValue | undefined>(undefined);
 
-const DEFAULT_FILTERS: SalesFilters = {
+// eslint-disable-next-line react-refresh/only-export-components
+export const DEFAULT_FILTERS: SalesFilters = {
   search: "",
   customerRegion: [],
   gender: [],
@@ -139,11 +140,10 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       totalAmount: 0,
       totalDiscount: 0,
     });
-    setPagination({page: 1, pageSize: 10, totalItems: 0, totalPages: 1});
+    setPagination({ page: 1, pageSize: 10, totalItems: 0, totalPages: 1 });
     setData([]);
-    updateFilters({});
+    setSort([{ key: "date", dir: "desc" }]);
   }, []);
-
 
   const queryString = useMemo(() => {
     const params = new URLSearchParams();
@@ -188,78 +188,74 @@ export const SalesProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     return params.toString();
   }, [filters, pagination.page, pagination.pageSize, sort]);
+  async function fetchData(controller: AbortController) {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch(`${BACKEND_URL}/api/sales?${queryString}`, {
+        signal: controller.signal,
+        cache: "no-store",
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      const json = await res.json();
+      setData(json.data || []);
+      setPagination((prev) => ({
+        ...prev,
+        totalItems: Number(json.pagination?.totalItems ?? 0),
+        totalPages: Number(json.pagination?.totalPages ?? 1),
+      }));
+
+      const rawStats = json.stats ?? {};
+      const totalUnitsSoldRaw = rawStats.totalUnitsSold ?? rawStats.total_units_sold ?? rawStats.units ?? 0;
+      const totalAmountRaw = rawStats.totalAmount ?? rawStats.total_amount ?? rawStats.finalAmount ?? 0;
+      const finalAmountRaw = rawStats.finalAmount ?? rawStats.final_amount ?? rawStats.totalAmount ?? totalAmountRaw;
+      const totalDiscountRaw = rawStats.totalDiscount ?? rawStats.total_discount ?? Number(finalAmountRaw) - Number(totalAmountRaw);
+
+      const normalizedStats: SalesStats = {
+        totalUnitsSold: Number(totalUnitsSoldRaw) || 0,
+        totalAmount: Number(totalAmountRaw) || 0,
+        totalDiscount: Number(totalDiscountRaw) || 0,
+      };
+
+      setStats(normalizedStats);
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") return;
+      console.error("fetch sales error:", err);
+      setError(err instanceof Error ? err.message : "Failed to fetch sales");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     const controller = new AbortController();
-
-    async function fetchData() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const res = await fetch(`${BACKEND_URL}/api/sales?${queryString}`, {
-          signal: controller.signal,
-          cache: "no-store",
-        });
-
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-
-        const json = await res.json();
-        setData(json.data || []);
-        setPagination((prev) => ({
-          ...prev,
-          totalItems: Number(json.pagination?.totalItems ?? 0),
-          totalPages: Number(json.pagination?.totalPages ?? 1),
-        }));
-
-        const rawStats = json.stats ?? {};
-        const totalUnitsSoldRaw = rawStats.totalUnitsSold ?? rawStats.total_units_sold ?? rawStats.units ?? 0;
-        const totalAmountRaw = rawStats.totalAmount ?? rawStats.total_amount ?? rawStats.finalAmount ?? 0;
-        const finalAmountRaw = rawStats.finalAmount ?? rawStats.final_amount ?? rawStats.totalAmount ?? totalAmountRaw;
-        const totalDiscountRaw = rawStats.totalDiscount ?? rawStats.total_discount ?? Number(finalAmountRaw) - Number(totalAmountRaw);
-
-        const normalizedStats: SalesStats = {
-          totalUnitsSold: Number(totalUnitsSoldRaw) || 0,
-          totalAmount: Number(totalAmountRaw) || 0,
-          totalDiscount: Number(totalDiscountRaw) || 0,
-        };
-
-        setStats(normalizedStats);
-      } catch (err: unknown) {
-        if (err instanceof Error && err.name === "AbortError") return;
-        console.error("fetch sales error:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch sales");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-
+    fetchData(controller);
     return () => controller.abort();
-  }, [queryString]);
+  }, [queryString, filters, sort]);
 
-
- const ctxValue = useMemo(
-   () => ({
-     data,
-     loading,
-     error,
-     filters,
-     sort,
-     pagination,
-     setPage,
-     setPageSize,
-     updateFilters,
-     resetFiltersAndTableData,
-     setSort,
-     updateStats,
-     stats,
-   }),
-   [data, loading, error, filters, sort, pagination, setPage, setPageSize, updateFilters, resetFiltersAndTableData, setSort, updateStats, stats] // dependencies
- );
+  const ctxValue = useMemo(
+    () => ({
+      data,
+      loading,
+      error,
+      filters,
+      sort,
+      pagination,
+      setPage,
+      setPageSize,
+      updateFilters,
+      resetFiltersAndTableData,
+      setSort,
+      updateStats,
+      stats,
+    }),
+    [data, loading, error, filters, sort, pagination, setPage, setPageSize, updateFilters, resetFiltersAndTableData, setSort, updateStats, stats] // dependencies
+  );
 
   return <SalesContext.Provider value={ctxValue}>{children}</SalesContext.Provider>;
 };

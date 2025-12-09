@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowDown2, ArrowUp2 } from "iconsax-react";
+import { DEFAULT_FILTERS, useSales } from "../../context/salesContext";
 
 type Mode = "single" | "multi" | "range" | "dateRange";
 
@@ -9,7 +10,7 @@ interface Option {
 }
 
 interface DropdownProps {
-  label: string;
+    label: string;
   icon?: React.ReactNode;
   mode: Mode;
   options?: Option[]; // used for single & multi
@@ -24,9 +25,10 @@ interface DropdownProps {
       | { start: string | null; end: string | null } // dateRange
       | { direction: "asc" | "desc" } // sort
   ) => void;
+  onClose?: boolean;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, icon, mode, options = [], onChange, width, showSelectedValue, defaultSelectedValue }: DropdownProps) => {
+const Dropdown: React.FC<DropdownProps> = ({ onClose, label, icon, mode, options = [], onChange, width, showSelectedValue, defaultSelectedValue }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValueLabel, setSelectedValueLabel] = useState<string | null>(defaultSelectedValue ? options.find((opt) => opt.value === defaultSelectedValue)?.label || null : null);
 
@@ -47,6 +49,20 @@ const Dropdown: React.FC<DropdownProps> = ({ label, icon, mode, options = [], on
     from: "",
     to: "",
   });
+
+  const { filters } = useSales();
+  useEffect(() => {
+    if (filters === DEFAULT_FILTERS) {
+      setTimeout(() => {
+        setMultiValues([]);
+        setSingleValue(null);
+        setRange({ min: "", max: "" });
+        setDateRange({ from: "", to: "" });
+        setSelectedValueLabel(null);
+        setIsOpen(false);
+      }, 100);
+    }
+  }, [filters]);
 
   const toggleOpen = () => {
     setIsOpen((prev) => !prev);
@@ -94,6 +110,11 @@ const Dropdown: React.FC<DropdownProps> = ({ label, icon, mode, options = [], on
     setIsOpen(false);
   };
 
+  const clearRange = () => {
+    setRange({ min: "", max: "" });
+    onChange?.({ min: null, max: null });
+  };
+
   const handleDateRangeChange = (key: "from" | "to", val: string) => {
     setDateRange((prev) => ({
       ...prev,
@@ -114,6 +135,19 @@ const Dropdown: React.FC<DropdownProps> = ({ label, icon, mode, options = [], on
 
     setIsOpen(false);
   };
+
+  const clearDateRange = () => {
+    setDateRange({ from: "", to: "" });
+    onChange?.({ start: null, end: null });
+  };
+
+  useEffect(() => {
+    if (onClose) {
+      setTimeout(() => {
+        setIsOpen(false);
+      }, 100);
+    }
+  }, [onClose]);
 
   return (
     <div className="relative inline-block text-left min-h-11 w-full filter-container">
@@ -175,9 +209,15 @@ const Dropdown: React.FC<DropdownProps> = ({ label, icon, mode, options = [], on
                 <input type="number" className="flex-1 border border-gray-300 rounded-md px-2 py-1 text-xs min-w-[40px]" value={range.max} onChange={(e) => handleRangeChange("max", e.target.value)} />
               </div>
 
-              <button type="button" onClick={applyRange} className="self-end mt-1 px-3 py-1.5 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-800">
-                Apply
-              </button>
+              <div className="flex items-center justify-end gap-1 w-full">
+                <button type="button" onClick={clearRange} className="self-end mt-1 px-3 py-1.5 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-800">
+                  Clear
+                </button>
+
+                <button type="button" onClick={applyRange} className="self-end mt-1 px-3 py-1.5 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-800">
+                  Apply
+                </button>
+              </div>
             </div>
           )}
 
@@ -195,9 +235,15 @@ const Dropdown: React.FC<DropdownProps> = ({ label, icon, mode, options = [], on
                 <input type="date" className="flex-1 border border-gray-300 rounded-md px-2 text-[8px] py-1 min-w-[100px]" value={dateRange.to} onChange={(e) => handleDateRangeChange("to", e.target.value)} />
               </div>
 
-              <button type="button" onClick={applyDateRange} className="self-end mt-1 px-3 py-1.5 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-800">
-                Apply
-              </button>
+              <div className="flex items-center justify-end gap-1 w-full">
+                <button type="button" onClick={clearDateRange} className="self-end mt-1 px-3 py-1.5 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-800">
+                  Clear
+                </button>
+
+                <button type="button" onClick={applyDateRange} className="self-end mt-1 px-3 py-1.5 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-800">
+                  Apply
+                </button>
+              </div>
             </div>
           )}
         </div>

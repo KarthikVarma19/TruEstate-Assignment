@@ -1,20 +1,19 @@
-import React from "react";
-import Topbar from "../../components/Topbar/Topbar.tsx";
-import Pagination from "../../components/Pagination/Pagination.tsx";
-import { useSales, type SortKey, type SortRule } from "../../context/salesContext.tsx";
+import React, { useState } from "react";
+import Topbar from "../../components/Topbar/Topbar";
+import Pagination from "../../components/Pagination/Pagination";
+import { useSales, type SortKey, type SortRule } from "../../context/salesContext";
 import { BarLoader } from "react-spinners";
-import { formatPhoneNumber } from "../../utils/formatPhoneNumber.ts";
-import CopyIcon from "../../components/CopyIcon/CopyIcon.tsx";
-import { formatCurrency } from "../../utils/formatCurrency.ts";
+import { formatPhoneNumber } from "../../utils/formatPhoneNumber";
+import CopyIcon from "../../components/CopyIcon/CopyIcon";
+import { formatCurrency } from "../../utils/formatCurrency";
 import { ArrowRotateLeft } from "iconsax-react";
 import Dropdown from "../../components/Dropdown/Dropdown";
 import "../../styles/Sales.css";
-import StatsCard from "../../components/StatsCard/StatsCard.tsx";
+import StatsCard from "../../components/StatsCard/StatsCard";
 
 const Sales: React.FC = () => {
-  const { loading, data, stats } = useSales();
-  const { updateFilters, resetFiltersAndTableData, setSort } = useSales();
-
+  const { loading, data, stats, updateFilters, resetFiltersAndTableData, setSort, pagination, setPage, setPageSize } = useSales();
+  const [closeDropDown] = useState<boolean>(false);
   const parseSortValues = (values: string[]): SortRule[] => {
     return values
       .map((v) => {
@@ -34,6 +33,7 @@ const Sales: React.FC = () => {
           <div className="topbar">
             <Topbar title="Sales Management System" searchPlaceholder="Name, Phone no." />
           </div>
+          {/* Filters */}
           <div className="mr-4 ml-4">
             <div className="flex flex-row items-center bg-white h-[62px] filter-container">
               <div className="flex items-center gap-2">
@@ -43,6 +43,7 @@ const Sales: React.FC = () => {
                 </button>
                 {/* Customer Region (multi) */}
                 <Dropdown
+                  onClose={closeDropDown}
                   label="Customer Region"
                   mode="multi"
                   width="min-w-[100px]"
@@ -64,6 +65,7 @@ const Sales: React.FC = () => {
 
                 {/* Gender (multi for backend simplicity) */}
                 <Dropdown
+                  onClose={closeDropDown}
                   label="Gender"
                   mode="multi"
                   width="min-w-[50px]"
@@ -83,6 +85,7 @@ const Sales: React.FC = () => {
 
                 {/* Age Range */}
                 <Dropdown
+                  onClose={closeDropDown}
                   label="Age Range"
                   mode="range"
                   width="min-w-[100px]"
@@ -100,6 +103,7 @@ const Sales: React.FC = () => {
 
                 {/* Product Category */}
                 <Dropdown
+                  onClose={closeDropDown}
                   label="Product Category"
                   mode="multi"
                   width="min-w-[150px]"
@@ -119,6 +123,7 @@ const Sales: React.FC = () => {
 
                 {/* Tags */}
                 <Dropdown
+                  onClose={closeDropDown}
                   label="Tags"
                   mode="multi"
                   width="min-w-[100px]"
@@ -150,6 +155,7 @@ const Sales: React.FC = () => {
 
                 {/* Payment Method */}
                 <Dropdown
+                  onClose={closeDropDown}
                   label="Payment Method"
                   mode="multi"
                   width="min-w-[130px]"
@@ -172,6 +178,7 @@ const Sales: React.FC = () => {
 
                 {/* Date range */}
                 <Dropdown
+                  onClose={closeDropDown}
                   label="Date"
                   mode="dateRange"
                   width="min-w-[70px]"
@@ -189,6 +196,7 @@ const Sales: React.FC = () => {
               {/* Sort */}
               <div className="flex ml-auto items-center gap-2">
                 <Dropdown
+                  onClose={closeDropDown}
                   label="Sort by: "
                   mode="single"
                   width="min-w-[200px]"
@@ -300,7 +308,14 @@ const Sales: React.FC = () => {
       <hr className="table-pagination-divider" />
       {/* Pagination */}
       <div className="flex items-center justify-center table-pagination text-xs text-[#55566A] whitespace-nowrap">
-        <Pagination disabled={false} />
+        <Pagination
+          disabled={false}
+          page={pagination.page}
+          pageSize={pagination.pageSize}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          onPageChange={(p: number) => setPage(p)}
+          onPageSizeChange={(s: number) => setPageSize(s)} />
       </div>
     </div>
   );
