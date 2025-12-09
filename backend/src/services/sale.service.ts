@@ -104,10 +104,8 @@ export const buildSortObject = (sort?: string | null) => {
     const dirNum = dir === "desc" ? -1 : 1;
     const sortMap: Record<string, string> = {
       date: "Date",
-      totalAmount: "Total Amount",
       quantity: "Quantity",
       customerName: "Customer Name",
-      age: "Age",
     };
     const mongoField = sortMap[field ?? ""];
     if (mongoField) sortObj[mongoField] = dirNum;
@@ -188,7 +186,7 @@ export const getSales = async (params: Partial<SaleQueryParams>) => {
     for (const it of items) {
       const qty = Number(it["Quantity"] ?? 0);
       const tAmt = Number(it["Total Amount"] ?? 0);
-      const fAmt = Number(it["Final Amount"] ?? tAmt); // if Final Amount missing, fallback to Total
+      const fAmt = Number(it["Final Amount"] ?? tAmt); 
       totalUnitsSold += Number.isFinite(qty) ? qty : 0;
       totalAmount += Number.isFinite(tAmt) ? tAmt : 0;
       finalAmount += Number.isFinite(fAmt) ? fAmt : 0;

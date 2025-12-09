@@ -1,6 +1,5 @@
 import { Request as ExpressRequest, Response as ExpressResponse } from "express";
-import { getSales } from "../services/sale.service";
-import { SaleQueryParams } from "../services/sale.service";
+import { getSales, SaleQueryParams } from "../services/sale.service";
 
 export const getAllSales = async (req: ExpressRequest, res: ExpressResponse) => {
   try {
@@ -24,8 +23,8 @@ export const getAllSales = async (req: ExpressRequest, res: ExpressResponse) => 
     const params = {
       page: page ? Number(page) : undefined,
       pageSize: pageSize ? Number(pageSize) : undefined,
-      sort: sort ? String(sort) : undefined,
-      search: search ? String(search) : undefined,
+      sort: sort ? String(sort as string) : undefined,
+      search: search ? String(search as string) : undefined,
       customerRegion: customerRegion ?? undefined,
       gender: gender ?? undefined,
       productCategory: productCategory ?? undefined,
@@ -33,8 +32,8 @@ export const getAllSales = async (req: ExpressRequest, res: ExpressResponse) => 
       paymentMethod: paymentMethod ?? undefined,
       ageMin: ageMin ? Number(ageMin) : undefined,
       ageMax: ageMax ? Number(ageMax) : undefined,
-      dateFrom: dateFrom ? String(dateFrom) : undefined,
-      dateTo: dateTo ? String(dateTo) : undefined,
+      dateFrom: dateFrom ? String(dateFrom as string) : undefined,
+      dateTo: dateTo ? String(dateTo as string) : undefined,
     };
 
     const result = await getSales(params as SaleQueryParams);
